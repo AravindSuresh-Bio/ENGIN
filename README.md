@@ -1,49 +1,51 @@
-# ENGIN-V: Edge-Native Genomic Information Normalizer & Vault
-**Protocol Version:** 1.0.0-Alpha  
-**Lead Architect:** Aravind Suresh (AMRSB)  
-**Core Logic:** C++ / Python Stream-Processing  
+# ENGIN-V: Edge-Native Genomic Information Normalizer
+**Version:** 1.0.0-Beta
+**Lead Developer:** Aravind Suresh (AMRSB)
+**Core Logic:** Python / C++ Stream Processing
 
 
 
 ## 🧬 Executive Summary
-**ENGIN-V** is an integrated edge-computing suite designed to solve the "Data Debt" crisis in high-throughput sequencing. Rather than treating genomic data as static files, ENGIN-V treats DNA sequencing as a **Live Network Stream**, applying real-time filtration and normalization before data ever reaches long-term storage.
+**ENGIN-V** is an edge-computing utility designed to filter genomic sequencing data in real-time. By acting as a "Bio-Firewall" between the DNA sequencer and the storage network, it solves the critical issue of data redundancy.
 
-By sitting at the interface between the sequencer and the network, ENGIN-V achieves **>90% storage reduction** and ensures **Inherent GDPR Compliance** through data minimization at the source.
-
----
-
-## 🚀 The Three Pillars of ENGIN-V
-
-### 1. The ENGIN (Filtration Layer)
-Utilizes a **Negative Selection Algorithm** to perform real-time host-subtraction. 
-* **Mechanism:** Deep Packet Inspection (DPI) for FASTQ streams.
-* **Logic:** Automatically identifies and "drops" Human Reference reads while preserving high-value pathogens and novel mutations.
-
-### 2. The RES-Q Protocol (Quality Normalization)
-**RES-Q** (Residual-Encoded Quality) is a proprietary hierarchical compression protocol for Phred Quality Scores.
-* **Mechanism:** Implements a dual-stream bridge.
-* **Tier 1 (Quantized):** Maps scores to 9 high-efficiency bins for rapid indexing.
-* **Tier 2 (Residual):** Stores mathematical residuals separately for 100% lossless reconstruction.
-
-
-### 3. The Vault (Stealth-Mode Security)
-An integrated encryption layer utilizing **Proprietary E2EE** logic.
-* **Mechanism:** Secures identifying genomic tokens at the edge to prevent re-identification attacks.
+The system utilizes a **Negative Selection Algorithm** to perform real-time host-subtraction, automatically discarding "Normal" Human reads while preserving high-value pathogens and variants. This results in **>90% storage reduction** and cleaner datasets for downstream analysis.
 
 ---
 
-## 🛠️ Technical Architecture
+## 🚀 Core Features
 
+### 1. Real-Time Filtration (The ENGIN)
+Unlike standard tools that process static files, ENGIN-V intercepts the FASTQ stream at the source (Simulated via USB/Network interface).
+* **Logic:** Deep Packet Inspection (DPI) for genomic reads.
+* **Mechanism:** Checks incoming reads against a local "Host Reference" (Blocklist).
+* **Result:** Matches are dropped instantly. Non-matches (Pathogens/Mutations) are passed to storage.
 
-| Component | Simulation Role |
-| :--- | :--- |
-| **Sequencer Interface** | High-speed FASTQ data generation (Termux). |
-| **Physical Link** | USB RNDIS (Simulated hardware bus). |
-| **ENGIN Edge Server** | Real-time filtration, RES-Q encoding, and encryption. |
+### 2. Data Minimization
+Designed to meet **GDPR Article 5** requirements by ensuring that sensitive, non-diagnostic human DNA is never stored on the cloud.
 
 ---
 
-## 📈 Performance Benchmarks (Preliminary)
-* **Data Minimization:** 95% reduction in "Normal" Human reads.
-* **Quality Compression:** ~3.5 Bits Per Quality (BPQ) score in lossless mode.
-* **Latency:** <2ms processing time per read (simulated).
+## 🛠️ Technical Architecture (PoC Simulation)
+Since physical access to Illumina sequencers is restricted, this repository uses a "Digital Twin" architecture:
+
+| Component | Simulation Substitute | Role |
+| :--- | :--- | :--- |
+| **Sequencer** | Android Device (Termux) | Generates and streams raw FASTQ reads. |
+| **Connection** | USB Tethering | Simulates the high-speed hardware link. |
+| **Edge Node** | Workstation (Python) | Runs the filtration algorithm and saves output. |
+
+---
+
+## 📂 Repository Structure
+```text
+ENGIN-V/
+├── core_logic/
+│   ├── engin_filter.py      # Main filtration script
+│   └── host_loader.py       # Reference database handler
+│
+├── simulation/
+│   ├── sequencer_sim.py     # Generates synthetic read streams
+│   └── sample_gen.py        # Creates mixed Human/Pathogen samples
+│
+└── docs/
+    └── BENCHMARKS.md        # Storage savings log
