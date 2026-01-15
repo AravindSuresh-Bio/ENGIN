@@ -32,6 +32,12 @@ Sensitive human genetic data is filtered and discarded at the hardware edge. It 
 
 ---
 
+## ☁️ Cloud Validation Strategy
+Before deploying to physical hardware, ENGIN utilizes **Azure Cloud** for high-stress validation and benchmarking:
+
+* **Virtual Edge Simulation (Digital Twins):** We utilize **Azure Virtual Machines** configured with constrained resources (RAM/CPU limits) to mimic the hardware limitations of physical edge devices (e.g., Raspberry Pi / Jetson). This allows us to benchmark the ENGIN C++ logic against "Digital Twins" of our target hardware.
+* **Massive Dataset Benchmarking:** Real genomic datasets are Terabytes in size. We use **Azure Blob Storage** to host massive synthetic FASTQ streams and "replay" them against our algorithm to measure throughput speed and packet loss in a controlled, high-bandwidth environment.
+
 ## 🛠️ Simulation Architecture (Digital Twin)
 Since physical access to high-throughput sequencers (e.g., Illumina NovaSeq) is restricted, this repository utilizes a **Client-Server Simulation** to demonstrate the protocol:
 
