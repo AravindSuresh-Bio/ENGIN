@@ -1,76 +1,136 @@
-# ENGIN: Edge-Native Genomic Inspection Node
-**Version:** 1.0.0-Beta  
-**Lead Architect:** Aravind Suresh (AMRSB)  
-**Architecture:** Python / C++ Stream Processing  
+# ENGIN — Edge-Native Genomic Inspection Node
 
-## 🧬 Project Overview
-**ENGIN** (Edge-Native Genomic Inspection Node) is a specialized real-time filtration protocol for high-throughput DNA sequencing pipelines. Acting as a "Bio-Firewall," it sits directly between the sequencer and the storage infrastructure to perform **Deep Packet Inspection** on biological data streams.
-
-**The Problem:**
-Clinical sequencing generates massive amounts of non-informative "Host" data (e.g., 99% Human background DNA in an infection sample), which clogs network bandwidth and incurs huge cloud storage costs.
-
-**The Solution:**
-ENGIN utilizes a **Negative Selection Algorithm** to intercept raw FASTQ reads at the source (the Edge). It automatically identifies and discards known Host reads while preserving Pathogen and Variant data. This results in **>90% Data Minimization** before the data ever touches the disk, ensuring faster downstream analysis.
+Experimental prototype exploring streamed genomic read filtration and edge-oriented FASTQ preprocessing workflows.
 
 ---
 
-## ⚡ Quick Start (Demo)
+## 🧬 Overview
 
-**Watch the ENGIN Protocol in action (Real-time Stream Filtration):**
+ENGIN (Edge-Native Genomic Inspection Node) is an exploratory computational biology project investigating whether genomic reads can be filtered during streaming rather than after complete dataset generation.
 
-<video src="https://github.com/user-attachments/assets/c4d4dcb6-ef17-44bf-ae76-d3765d88d0bd" controls="controls" style="max-width: 100%;">
-</video>
+The project simulates a simplified edge-processing workflow where incoming FASTQ-style reads are compared against a local reference dataset to separate known "host" sequences from potentially relevant non-host reads.
 
-*(If the video player does not load above, [click here to watch the raw demo](https://github.com/user-attachments/assets/c4d4dcb6-ef17-44bf-ae76-d3765d88d0bd))*
-
-## 🚀 Key Capabilities
-
-### 1. Real-Time "Bio-Firewall"
-Unlike standard bioinformatics tools that process static files *after* sequencing, ENGIN processes the live data stream.
-* **Input:** Raw FASTQ packets via USB/Network.
-* **Logic:** K-mer based negative selection against a local Host Reference.
-* **Output:** Purified pathogen/variant stream only.
-
-### 2. Radical Data Minimization
-By discarding the "Normal" background noise, ENGIN reduces storage requirements by orders of magnitude.
-* **Benchmark:** >90% reduction in file size for metagenomic samples.
-* **Cost Impact:** Directly reduces AWS S3 / Azure Blob storage costs for clinical labs.
+The repository currently contains early proof-of-concept implementations written primarily in Python.
 
 ---
 
-## ☁️ Cloud Validation Strategy
-Before deploying to physical hardware, ENGIN utilizes **Azure Cloud** for high-stress validation and benchmarking:
+## 🎯 Project Goals
 
-* **Virtual Edge Simulation (Digital Twins):** We utilize **Azure Virtual Machines** configured with constrained resources (RAM/CPU limits) to mimic the hardware limitations of physical edge devices (e.g., Raspberry Pi / Jetson). This allows us to benchmark the ENGIN C++ logic against "Digital Twins" of our target hardware.
-* **Massive Dataset Benchmarking:** Real genomic datasets are Terabytes in size. We use **Azure Blob Storage** to host massive synthetic FASTQ streams and "replay" them against our algorithm to measure throughput speed and packet loss in a controlled, high-bandwidth environment.
+This project was created to explore concepts involving:
 
-## 🛠️ Simulation Architecture (Digital Twin)
-Since physical access to high-throughput sequencers (e.g., Illumina NovaSeq) is restricted, this repository utilizes a **Client-Server Simulation** to demonstrate the protocol:
+* Streamed genomic data processing
+* Host-versus-foreign read filtering
+* Edge-oriented biological workflows
+* Lightweight genomic preprocessing
+* Real-time sequence handling concepts
+* Systems-oriented bioinformatics experimentation
 
-| Component | Simulation Substitute | Role |
-| :--- | :--- | :--- |
-| **The Sequencer** | Android (Termux) / Client Script | Generates and streams synthetic FASTQ reads via TCP/IP. |
-| **The Connection** | Localhost / USB Tethering | Simulates the high-speed hardware bus (e.g., PCIe/USB 3.0). |
-| **The Edge Node** | Workstation (ENGIN Core) | Receives packets, performs filtration, and writes the minimized file. |
+Rather than functioning as a production bioinformatics tool, ENGIN is intended as an experimental architecture and learning-oriented systems project.
 
 ---
 
-## ⚡ Quick Start (Demo)
+## ⚙️ Current Prototype Architecture
 
-**1. Generate Synthetic Data:**
-Create a mixed sample (Human + Pathogen) for testing.
+The current implementation simulates a simplified sequencing pipeline using socket-based communication between a synthetic read generator and a filtering node.
+
+### Components
+
+| Component             | Role                                        |
+| --------------------- | ------------------------------------------- |
+| `generate_sample.py`  | Creates synthetic sequence samples          |
+| `sequencer.py`        | Simulates streamed read transmission        |
+| `bioshield_server.py` | Receives reads and performs filtering logic |
+
+---
+
+## 🔬 Current Filtering Logic
+
+The prototype currently uses direct sequence matching against a local host reference dataset.
+
+Simplified workflow:
+
+1. Incoming reads are streamed through UDP sockets
+2. Reads are compared against a locally loaded host database
+3. Matching reads are discarded
+4. Non-matching reads are written to an output FASTA file
+
+This implementation is intentionally simplified and primarily designed to explore workflow architecture rather than optimized biological accuracy or production-scale throughput.
+
+---
+
+## 🧪 Experimental Nature
+
+This repository represents an exploratory proof-of-concept project.
+
+The current implementation:
+
+* Uses simplified filtering logic
+* Simulates sequencing workflows
+* Is not clinically validated
+* Is not intended for production or diagnostic use
+* Does not represent optimized genomic classification methods
+
+Future versions may explore:
+
+* K-mer-based filtering
+* Bloom filters
+* Faster indexing structures
+* Rust/C++ implementations
+* Distributed processing
+* Cryptographic verification systems
+
+---
+
+## 🚀 Running the Demo
+
+### 1. Generate Synthetic Data
+
 ```bash
-python3 simulation/sample_gen.py
+python generate_sample.py
+```
 
-2. Initialize the ENGIN Filter:
-Start the server to listen for the sequencer stream.
-python3 core_logic/engin_filter.py
+### 2. Start the Filtering Node
 
-3. Start the Sequencer Stream:
-Simulate the DNA machine sending data.
-python3 simulation/sequencer_sim.py
+```bash
+python bioshield_server.py
+```
 
-4. Verify Results:
-Check the output/ directory. You will see the filtered file size is ~90% smaller than the raw input, containing only the target non-host reads.
-⚠️ Disclaimer
-Prototype Status: This software is a functional Proof-of-Concept (PoC) written in Python for architectural demonstration. Production deployment for clinical use would require porting the core filtration logic to C++ or Rust for hardware acceleration.
+### 3. Start the Stream Simulator
+
+```bash
+python sequencer.py
+```
+
+---
+
+## 🧠 Technical Interests Behind This Project
+
+ENGIN was primarily developed as an exploratory systems-biology and computational infrastructure project investigating intersections between:
+
+* Bioinformatics workflows
+* Stream processing
+* Edge computing concepts
+* Sequence filtration architectures
+* Biological information systems
+
+---
+
+## ⚠️ Disclaimer
+
+This project is an experimental educational and exploratory prototype created for systems-oriented computational biology experimentation.
+
+It should not be used for:
+
+* clinical diagnostics
+* medical decision-making
+* production genomic analysis
+* validated pathogen detection workflows
+
+---
+
+## 👤 Author
+
+Aravind Suresh
+Biotechnology Graduate & Computational Biology Student
+
+Associate Member, Royal Society of Biology (AMRSB)
